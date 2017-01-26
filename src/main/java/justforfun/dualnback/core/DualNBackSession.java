@@ -4,7 +4,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.collections4.queue.CircularFifoQueue;
+import justforfun.dualnback.utils.GameStateGenerator;
+import justforfun.dualnback.utils.GameStateSequence;
+import justforfun.dualnback.utils.RandomGameStateGenerator;
 
 public class DualNBackSession {
 
@@ -12,13 +14,13 @@ public class DualNBackSession {
 
 	private GameConfiguration gameConfig;
 
-	private CircularFifoQueue<GameState> stateSequence;
+	private GameStateSequence stateSequence;
 
 	private Timer scheduler = new Timer();
 
 	public DualNBackSession(GameConfiguration gameConfiguration) {
-		this.gameConfig = gameConfiguration;
-		this.stateSequence = new CircularFifoQueue<>(gameConfig.getNBack());
+		gameConfig = gameConfiguration;
+		stateSequence = new GameStateSequence(gameConfig.getNBackLevel());
 	}
 
 	public void start() {
@@ -31,15 +33,15 @@ public class DualNBackSession {
 	}
 
 	public boolean isCurrentLetterAsNBack() {
-		Letter nBackLatter = getNBackGameState().getLetter();
-		Letter currentLatter = getCurrentGameState().getLetter();
+		Letter nBackLatter = stateSequence.getNBackState().getLetter();
+		Letter currentLatter = stateSequence.getCurrentState().getLetter();
 
 		return currentLatter.equals(nBackLatter);
 	}
 
 	public boolean isCurrentPositionAsNBack() {
-		Position nBackPosition = getNBackGameState().getPosition();
-		Position currentPosition = getCurrentGameState().getPosition();
+		Position nBackPosition = stateSequence.getNBackState().getPosition();
+		Position currentPosition = stateSequence.getCurrentState().getPosition();
 
 		return currentPosition.equals(nBackPosition);
 	}
@@ -48,20 +50,12 @@ public class DualNBackSession {
 	public String toString() {
 		return "DualNBackSession [stateSequence=" + stateSequence + "]";
 	}
-	
-	private GameState getNBackGameState() {
-		return stateSequence.peek();
-	}
-
-	private GameState getCurrentGameState() {
-		return stateSequence.get(0);
-	}
 
 	private class Trial extends TimerTask {
 
 		@Override
 		public void run() {
-			stateSequence.add(stateGenerator.nextState());
+			stateSequence.addState(stateGenerator.nextState());
 		}
 
 	}
@@ -72,7 +66,9 @@ public class DualNBackSession {
 		for (int i = 0; i < 10; i++) {
 			System.out.println(session);
 			Thread.sleep(3000);
+			System.out.println(session.isCurrentLetterAsNBack());
 		}
+		session.cancel();
 	}
 
 }

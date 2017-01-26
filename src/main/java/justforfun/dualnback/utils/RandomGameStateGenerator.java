@@ -1,6 +1,10 @@
-package justforfun.dualnback.core;
+package justforfun.dualnback.utils;
 
 import java.util.Random;
+
+import justforfun.dualnback.core.GameState;
+import justforfun.dualnback.core.Letter;
+import justforfun.dualnback.core.Position;
 
 public class RandomGameStateGenerator implements GameStateGenerator {
 
