@@ -2,6 +2,7 @@ package justforfun.dualnback.core;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import justforfun.dualnback.utils.RandomTrialStateGenerator;
@@ -16,17 +17,28 @@ public class DualNBackSession {
 
 	private TrialStateSequence stateSequence;
 
+	private SessionScore score;
+
 	private Timer scheduler = new Timer();
+	
+	private CountDownLatch duringTrialsLatch;
 
 	public DualNBackSession(GameConfiguration gameConfiguration) {
 		gameConfig = new GameConfiguration(gameConfiguration);
 		stateSequence = new TrialStateSequence(gameConfig.getNBackLevel());
 		stateGenerator = new RandomTrialStateGenerator();
+		score = new SessionScore();
+		duringTrialsLatch = new CountDownLatch(gameConfig.getTrials());
 	}
 
 	public void start() {
 		long trialPeriodInMillis = TimeUnit.MILLISECONDS.convert(gameConfig.getSecPerTrial(), TimeUnit.SECONDS);
 		scheduler.scheduleAtFixedRate(new Trial(), trialPeriodInMillis / 2, trialPeriodInMillis);
+	}
+	
+	public SessionScore get() throws InterruptedException {
+		duringTrialsLatch.await();
+		return score;
 	}
 
 	public void cancel() {
@@ -37,14 +49,28 @@ public class DualNBackSession {
 		Letter nBackLatter = stateSequence.getNBackState().getLetter();
 		Letter currentLatter = stateSequence.getCurrentState().getLetter();
 
-		return currentLatter.equals(nBackLatter);
+		boolean currentLetterAsNBack = currentLatter.equals(nBackLatter);
+		if (currentLetterAsNBack) {
+			score.letterMatches();
+		} else {
+			score.letterMistake();
+		}
+
+		return currentLetterAsNBack;
 	}
 
 	public boolean isCurrentPositionAsNBack() {
 		Position nBackPosition = stateSequence.getNBackState().getPosition();
 		Position currentPosition = stateSequence.getCurrentState().getPosition();
 
-		return currentPosition.equals(nBackPosition);
+		boolean currentPositionAsNBack = currentPosition.equals(nBackPosition);
+		if (currentPositionAsNBack) {
+			score.positionMatches();
+		} else {
+			score.positionMistake();
+		}
+
+		return currentPositionAsNBack;
 	}
 
 	@Override
@@ -57,6 +83,8 @@ public class DualNBackSession {
 		@Override
 		public void run() {
 			stateSequence.addState(stateGenerator.nextState());
+			System.out.println(stateSequence);
+			duringTrialsLatch.countDown();
 		}
 
 	}
