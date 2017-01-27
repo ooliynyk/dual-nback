@@ -4,23 +4,24 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-import justforfun.dualnback.utils.GameStateGenerator;
-import justforfun.dualnback.utils.GameStateSequence;
-import justforfun.dualnback.utils.RandomGameStateGenerator;
+import justforfun.dualnback.utils.RandomTrialStateGenerator;
+import justforfun.dualnback.utils.TrialStateGenerator;
+import justforfun.dualnback.utils.TrialStateSequence;
 
 public class DualNBackSession {
 
-	private GameStateGenerator stateGenerator = new RandomGameStateGenerator();
+	private TrialStateGenerator stateGenerator;
 
 	private GameConfiguration gameConfig;
 
-	private GameStateSequence stateSequence;
+	private TrialStateSequence stateSequence;
 
 	private Timer scheduler = new Timer();
 
 	public DualNBackSession(GameConfiguration gameConfiguration) {
-		gameConfig = gameConfiguration;
-		stateSequence = new GameStateSequence(gameConfig.getNBackLevel());
+		gameConfig = new GameConfiguration(gameConfiguration);
+		stateSequence = new TrialStateSequence(gameConfig.getNBackLevel());
+		stateGenerator = new RandomTrialStateGenerator();
 	}
 
 	public void start() {
@@ -58,17 +59,6 @@ public class DualNBackSession {
 			stateSequence.addState(stateGenerator.nextState());
 		}
 
-	}
-
-	public static void main(String[] args) throws InterruptedException {
-		DualNBackSession session = new DualNBackSession(new GameConfiguration(2, 32, 3));
-		session.start();
-		for (int i = 0; i < 10; i++) {
-			System.out.println(session);
-			Thread.sleep(3000);
-			System.out.println(session.isCurrentLetterAsNBack());
-		}
-		session.cancel();
 	}
 
 }

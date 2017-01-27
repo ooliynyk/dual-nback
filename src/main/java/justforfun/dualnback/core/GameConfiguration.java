@@ -2,9 +2,15 @@ package justforfun.dualnback.core;
 
 public class GameConfiguration {
 
-	private final int nBackLevel;
-	private final int trials;
-	private final int secPerTrial;
+	private int nBackLevel;
+	private int trials;
+	private int secPerTrial;
+
+	public GameConfiguration(GameConfiguration other) {
+		this.nBackLevel = other.nBackLevel;
+		this.trials = other.trials;
+		this.secPerTrial = other.secPerTrial;
+	}
 
 	public GameConfiguration(int nBackLevel, int trials, int secPerTrial) {
 		this.nBackLevel = nBackLevel;
@@ -16,12 +22,24 @@ public class GameConfiguration {
 		return nBackLevel;
 	}
 
+	public void setNBackLevel(int nBackLevel) {
+		this.nBackLevel = nBackLevel;
+	}
+
 	public int getTrials() {
 		return trials;
 	}
 
+	public void setTrials(int trials) {
+		this.trials = trials;
+	}
+
 	public int getSecPerTrial() {
 		return secPerTrial;
+	}
+
+	public void setSecPerTrial(int secPerTrial) {
+		this.secPerTrial = secPerTrial;
 	}
 
 }

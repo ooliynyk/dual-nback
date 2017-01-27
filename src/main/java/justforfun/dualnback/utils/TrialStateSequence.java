@@ -2,19 +2,19 @@ package justforfun.dualnback.utils;
 
 import java.util.concurrent.LinkedBlockingDeque;
 
-import justforfun.dualnback.core.GameState;
+import justforfun.dualnback.core.TrialState;
 
-public class GameStateSequence {
+public class TrialStateSequence {
 
 	private int nBackLevel;
-	private LinkedBlockingDeque<GameState> deque;
+	private LinkedBlockingDeque<TrialState> deque;
 
-	public GameStateSequence(int nBackLevel) {
+	public TrialStateSequence(int nBackLevel) {
 		this.nBackLevel = nBackLevel;
 		deque = new LinkedBlockingDeque<>(nBackLevel);
 	}
 
-	public void addState(GameState state) {
+	public void addState(TrialState state) {
 		if (deque.size() == nBackLevel) {
 			deque.removeLast();
 		}
@@ -22,22 +22,22 @@ public class GameStateSequence {
 		deque.addFirst(state);
 	}
 
-	public GameState getNBackState() {
+	public TrialState getNBackState() {
 		awaitWhileEmpty();
 		return deque.peekLast();
 	}
 
-	public GameState getCurrentState() {
+	public TrialState getCurrentState() {
 		awaitWhileEmpty();
 		return deque.peekFirst();
 	}
 
 	private void awaitWhileEmpty() {
-		GameState state = null;
+		TrialState state = null;
 		if (deque.isEmpty()) {
 			try {
 				state = deque.takeFirst();
-				deque.addFirst(state);
+				deque.addLast(state);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -46,7 +46,7 @@ public class GameStateSequence {
 
 	@Override
 	public String toString() {
-		return "GameStateSequence [deque=" + deque + "]";
+		return "TrialStateSequence [deque=" + deque + "]";
 	}
 
 }

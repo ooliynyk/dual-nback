@@ -2,11 +2,11 @@ package justforfun.dualnback.utils;
 
 import java.util.Random;
 
-import justforfun.dualnback.core.GameState;
+import justforfun.dualnback.core.TrialState;
 import justforfun.dualnback.core.Letter;
 import justforfun.dualnback.core.Position;
 
-public class RandomGameStateGenerator implements GameStateGenerator {
+public class RandomTrialStateGenerator implements TrialStateGenerator {
 
 	private static final int TOTAL_LETTERS = Letter.values().length;
 	private static final int TOTAL_POSITIONS = Position.values().length;
@@ -14,8 +14,8 @@ public class RandomGameStateGenerator implements GameStateGenerator {
 	private final Random rand = new Random(System.currentTimeMillis());
 
 	@Override
-	public GameState nextState() {
-		return new GameState(generateNextLetter(), generateNextPosition());
+	public TrialState nextState() {
+		return new TrialState(generateNextLetter(), generateNextPosition());
 	}
 
 	private Letter generateNextLetter() {

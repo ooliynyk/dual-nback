@@ -1,12 +1,11 @@
 package justforfun.dualnback.core;
 
-public class GameState {
+public class TrialState {
 
 	private final Letter letter;
 	private final Position position;
 
-	public GameState(Letter letter, Position position) {
-		super();
+	public TrialState(Letter letter, Position position) {
 		this.letter = letter;
 		this.position = position;
 	}
@@ -21,7 +20,7 @@ public class GameState {
 
 	@Override
 	public String toString() {
-		return "GameState [letter=" + letter + ", position=" + position + "]";
+		return "TrialState [letter=" + letter + ", position=" + position + "]";
 	}
 
 }
