@@ -6,16 +6,16 @@ import justforfun.dualnback.core.TrialState;
 
 public class TrialStateSequence {
 
-	private int nBackLevel;
+	private int capacity;
 	private LinkedBlockingDeque<TrialState> deque;
 
 	public TrialStateSequence(int nBackLevel) {
-		this.nBackLevel = nBackLevel;
-		deque = new LinkedBlockingDeque<>(nBackLevel);
+		capacity = nBackLevel + 1;
+		deque = new LinkedBlockingDeque<>(capacity);
 	}
 
 	public void addState(TrialState state) {
-		if (deque.size() == nBackLevel) {
+		if (deque.size() == capacity) {
 			deque.removeLast();
 		}
 

@@ -1,18 +1,36 @@
 package justforfun.dualnback;
 
+import java.util.Scanner;
+
 import justforfun.dualnback.core.DualNBackSession;
 import justforfun.dualnback.core.GameConfiguration;
+import justforfun.dualnback.core.SessionStateListener;
+import justforfun.dualnback.core.TrialState;
 
 public class DualNbackApplication {
 
 	public static void main(String[] args) throws InterruptedException {
 		DualNBackSession session = new DualNBackSession(new GameConfiguration(2, 32, 3));
+		session.addStateListener(new SessionStateListener() {
+
+			@Override
+			public void onNextTrial(TrialState trialState) {
+				System.out.println("current state: " + trialState);
+			}
+			
+		});
+		
 		session.start();
-		for (int i = 0; i < 5; i++) {
-			Thread.sleep(3000);
-			System.out.println(session.isCurrentLetterAsNBack());
+		try (Scanner in = new Scanner(System.in)) {
+			while (true) {
+				String next = in.nextLine();
+				if (next.equals("a")) {
+					System.out.println(session.isCurrentPositionAsNBack());
+				} else if (next.equals("l")) {
+					System.out.println(session.isCurrentLetterAsNBack());
+				}
+			}
 		}
-		System.out.println(session.get());
 	}
 
 }
