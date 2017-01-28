@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import justforfun.dualnback.utils.RandomTrialStateGenerator;
@@ -18,6 +20,7 @@ public class DualNBackSession implements Session, SessionState {
 	private TrialStateSequence stateSequence;
 	private SessionScore score;
 	private Timer scheduler;
+	private ExecutorService executor;
 	private CountDownLatch duringTrialsLatch;
 	private List<SessionStateListener> stateListeners;
 
@@ -27,31 +30,27 @@ public class DualNBackSession implements Session, SessionState {
 		stateGenerator = new RandomTrialStateGenerator();
 		score = new SessionScore();
 		scheduler = new Timer();
+		executor = Executors.newSingleThreadExecutor();
 		duringTrialsLatch = new CountDownLatch(gameConfig.getTrials());
 		stateListeners = new ArrayList<>();
 	}
 
 	@Override
 	public void start() {
-		long trialPeriodInMillis = TimeUnit.MILLISECONDS.convert(gameConfig.getSecPerTrial(), TimeUnit.SECONDS);
-		scheduler.scheduleAtFixedRate(new Trial(), trialPeriodInMillis / 2, trialPeriodInMillis);
+		scheduleTrials();
+		awaitForFinish();
 	}
 
 	@Override
 	public void cancel() {
 		scheduler.cancel();
+		executor.shutdownNow();
 	}
 
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public SessionScore get() throws InterruptedException {
-		duringTrialsLatch.await();
-		return score;
 	}
 
 	@Override
@@ -94,25 +93,42 @@ public class DualNBackSession implements Session, SessionState {
 		return "DualNBackSession [stateSequence=" + stateSequence + "]";
 	}
 
+	private void scheduleTrials() {
+		long trialPeriodInMillis = TimeUnit.MILLISECONDS.convert(gameConfig.getSecPerTrial(), TimeUnit.SECONDS);
+		scheduler.scheduleAtFixedRate(new Trial(), trialPeriodInMillis / 2, trialPeriodInMillis);
+	}
+
+	private void awaitForFinish() {
+		executor.execute(() -> {
+			try {
+				duringTrialsLatch.await();
+				stateListeners.forEach(sl -> sl.onFinish(score));
+
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} finally {
+				cancel();
+			}
+		});
+	}
+
 	private class Trial extends TimerTask {
 
 		@Override
 		public void run() {
 			TrialState state = stateGenerator.nextState();
-			System.out.println(state);
 			saveState(state);
 			notifyListeners(state);
 		}
-		
+
 		private void saveState(TrialState state) {
 			stateSequence.addState(state);
+			System.out.println(stateSequence);
 			duringTrialsLatch.countDown();
 		}
-		
+
 		private void notifyListeners(TrialState state) {
-			for (SessionStateListener listener : stateListeners) {
-				listener.onNextTrial(state);
-			}
+			stateListeners.forEach(sl -> sl.onNextTrial(state));
 		}
 
 	}

@@ -8,6 +8,4 @@ public interface Session {
 
 	void pause();
 
-	SessionScore get() throws InterruptedException;
-
 }
