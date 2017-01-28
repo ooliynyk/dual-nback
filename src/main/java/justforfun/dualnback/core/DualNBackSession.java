@@ -103,7 +103,6 @@ public class DualNBackSession implements Session, SessionState {
 			try {
 				duringTrialsLatch.await();
 				stateListeners.forEach(sl -> sl.onFinish(score));
-
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} finally {
