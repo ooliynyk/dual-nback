@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import justforfun.dualnback.controller.SessionController;
 import justforfun.dualnback.core.DualNBackSession;
 import justforfun.dualnback.core.GameConfiguration;
 import justforfun.dualnback.core.SessionScore;
@@ -18,6 +19,10 @@ public class DualNbackApplication extends Application {
 
 	private Stage primaryStage;
 	private AnchorPane rootLayout;
+
+	private GameConfiguration gameConfiguration = new GameConfiguration(2, 10, 3);
+
+	private SessionController sessionController;
 
 	public static void test(String[] args) throws InterruptedException {
 		DualNBackSession session = new DualNBackSession(new GameConfiguration(2, 10, 3));
@@ -47,7 +52,7 @@ public class DualNbackApplication extends Application {
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -57,14 +62,17 @@ public class DualNbackApplication extends Application {
 		this.primaryStage = primaryStage;
 		this.primaryStage.setTitle("Double N-Back");
 		initSessionScene();
+		startSession();
 	}
 
 	public void initSessionScene() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(DualNbackApplication.class.getResource("ui/Session.fxml"));
+			loader.setLocation(DualNbackApplication.class.getResource("view/Session.fxml"));
 
 			rootLayout = (AnchorPane) loader.load();
+
+			sessionController = loader.getController();
 
 			Scene scene = new Scene(rootLayout);
 			primaryStage.setScene(scene);
@@ -72,6 +80,12 @@ public class DualNbackApplication extends Application {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void startSession() {
+		DualNBackSession session = new DualNBackSession(gameConfiguration);
+		session.addStateListener(sessionController);
+		session.start();
 	}
 
 }
