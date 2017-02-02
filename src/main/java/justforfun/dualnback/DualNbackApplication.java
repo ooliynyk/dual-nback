@@ -1,7 +1,6 @@
 package justforfun.dualnback;
 
 import java.io.IOException;
-import java.util.Scanner;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -11,47 +10,15 @@ import javafx.stage.Stage;
 import justforfun.dualnback.controller.SessionController;
 import justforfun.dualnback.core.DualNBackSession;
 import justforfun.dualnback.core.GameConfiguration;
-import justforfun.dualnback.core.SessionScore;
-import justforfun.dualnback.core.SessionStateListener;
-import justforfun.dualnback.core.TrialState;
 
 public class DualNbackApplication extends Application {
 
 	private Stage primaryStage;
 	private AnchorPane rootLayout;
 
-	private GameConfiguration gameConfiguration = new GameConfiguration(2, 10, 3);
+	private GameConfiguration gameConfiguration = new GameConfiguration(3, 5, 3);
 
 	private SessionController sessionController;
-
-	public static void test(String[] args) throws InterruptedException {
-		DualNBackSession session = new DualNBackSession(new GameConfiguration(2, 10, 3));
-		session.addStateListener(new SessionStateListener() {
-
-			@Override
-			public void onNextTrial(TrialState trialState) {
-				System.out.println("current state: " + trialState);
-			}
-
-			@Override
-			public void onFinish(SessionScore sessionScore) {
-				System.out.println("score: " + sessionScore);
-			}
-
-		});
-
-		session.start();
-		try (Scanner in = new Scanner(System.in)) {
-			while (true) {
-				String next = in.nextLine();
-				if (next.equals("a")) {
-					System.out.println(session.isCurrentPositionAsNBack());
-				} else if (next.equals("l")) {
-					System.out.println(session.isCurrentLetterAsNBack());
-				}
-			}
-		}
-	}
 
 	public static void main(String[] args) {
 		launch(args);
@@ -73,6 +40,7 @@ public class DualNbackApplication extends Application {
 			rootLayout = (AnchorPane) loader.load();
 
 			sessionController = loader.getController();
+			sessionController.initConfiguration(gameConfiguration);
 
 			Scene scene = new Scene(rootLayout);
 			primaryStage.setScene(scene);
