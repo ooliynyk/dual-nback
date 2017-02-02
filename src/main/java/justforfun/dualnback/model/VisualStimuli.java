@@ -7,22 +7,12 @@ public class VisualStimuli {
 
 	private Circle[][] circles;
 
-	private Circle activeVisualStimuliCircle;
 
 	public VisualStimuli(Circle[][] circles) {
 		this.circles = circles;
 	}
 
-	public void activateAt(Position position) {
-		if (activeVisualStimuliCircle != null) {
-			activeVisualStimuliCircle.setVisible(false);
-		}
-
-		activeVisualStimuliCircle = getCircleAtPosition(position);
-		activeVisualStimuliCircle.setVisible(true);
-	}
-
-	private Circle getCircleAtPosition(Position position) {
+	public Circle getCircleAtPosition(Position position) {
 		Circle circle = null;
 		switch (position) {
 		case BOTTOM_CENTER:
