@@ -14,6 +14,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import justforfun.dualnback.DualNBackApplication;
 import justforfun.dualnback.core.GameConfiguration;
 import justforfun.dualnback.core.Letter;
 import justforfun.dualnback.core.Position;
@@ -29,10 +30,13 @@ public class SessionController implements SessionStateListener, Initializable {
 	private static final String N_BACK_LEVEL_LABEL_PATTERN = "Dual %d-Back";
 
 	private VisualStimuli visualStimuli;
-	private LetterSpeaker speaker;
-	private SessionState sessionState;
-
 	private Circle activeVisualStimuliCircle;
+
+	private DualNBackApplication app;
+
+	private LetterSpeaker speaker;
+
+	private SessionState sessionState;
 	private int trialsTotal;
 	private int trialsCounter = 1;
 
@@ -67,7 +71,7 @@ public class SessionController implements SessionStateListener, Initializable {
 
 	@FXML
 	private void handlePositionMatchClick() {
-		if (sessionState.isCurrentLetterAsNBack()) {
+		if (sessionState.isCurrentPositionAsNBack()) {
 			matchButtonStyle(positionMatchButton);
 		} else {
 			unmatchByttonStyle(positionMatchButton);
@@ -76,7 +80,7 @@ public class SessionController implements SessionStateListener, Initializable {
 
 	@FXML
 	private void handleAudioMatchClick() {
-		if (sessionState.isCurrentPositionAsNBack()) {
+		if (sessionState.isCurrentLetterAsNBack()) {
 			matchButtonStyle(audioMatchButton);
 		} else {
 			unmatchByttonStyle(audioMatchButton);
@@ -109,9 +113,7 @@ public class SessionController implements SessionStateListener, Initializable {
 
 	@Override
 	public void onFinish(SessionScore sessionScore) {
-		clearButtonStyle(positionMatchButton);
-		clearButtonStyle(audioMatchButton);
-		System.out.println("score: " + sessionScore);
+		app.finishSession(sessionScore);
 	}
 
 	public void initKeysHandling(Scene scene) {
@@ -128,6 +130,7 @@ public class SessionController implements SessionStateListener, Initializable {
 					handleAudioMatchClick();
 					break;
 				case ESCAPE:
+					app.finishSession(null);
 					break;
 				default:
 					break;
@@ -145,6 +148,14 @@ public class SessionController implements SessionStateListener, Initializable {
 
 		sessionState.addStateListener(this);
 		this.sessionState = sessionState;
+	}
+
+	public DualNBackApplication getApp() {
+		return app;
+	}
+
+	public void setApp(DualNBackApplication app) {
+		this.app = app;
 	}
 
 	private void activateVisualStimuliAtPosition(Position position) {

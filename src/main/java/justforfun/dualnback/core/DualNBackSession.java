@@ -118,12 +118,12 @@ public class DualNBackSession implements Session, SessionState {
 			TrialState state = stateGenerator.nextState();
 			saveState(state);
 			notifyListeners(state);
+			duringTrialsLatch.countDown();
 		}
 
 		private void saveState(TrialState state) {
 			stateSequence.addState(state);
 			System.out.println(stateSequence);
-			duringTrialsLatch.countDown();
 		}
 
 		private void notifyListeners(TrialState state) {
