@@ -18,6 +18,7 @@ public class DualNbackApplication extends Application {
 
 	private GameConfiguration gameConfiguration = new GameConfiguration(3, 5, 3);
 
+	private DualNBackSession session;
 	private SessionController sessionController;
 
 	public static void main(String[] args) {
@@ -27,33 +28,30 @@ public class DualNbackApplication extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
-		this.primaryStage.setTitle("Dual N-Back");
+		session = new DualNBackSession(gameConfiguration);
 		initSessionScene();
-		startSession();
+		session.start();
 	}
 
-	public void initSessionScene() {
+	private void initSessionScene() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(DualNbackApplication.class.getResource("view/Session.fxml"));
 
 			rootLayout = (AnchorPane) loader.load();
 
-			sessionController = loader.getController();
-			sessionController.initConfiguration(gameConfiguration);
-
 			Scene scene = new Scene(rootLayout);
+
+			sessionController = loader.getController();
+			sessionController.initKeysHandling(scene);
+			sessionController.initConfiguration(gameConfiguration, session);
+
+			primaryStage.setTitle("Dual N-Back");
 			primaryStage.setScene(scene);
 			primaryStage.show();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public void startSession() {
-		DualNBackSession session = new DualNBackSession(gameConfiguration);
-		session.addStateListener(sessionController);
-		session.start();
 	}
 
 }
