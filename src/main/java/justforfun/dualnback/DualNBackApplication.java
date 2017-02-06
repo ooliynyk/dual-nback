@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import justforfun.dualnback.controller.MainController;
 import justforfun.dualnback.controller.SessionController;
 import justforfun.dualnback.core.DualNBackSession;
 import justforfun.dualnback.core.GameConfiguration;
@@ -21,10 +22,6 @@ public class DualNBackApplication extends Application {
 	private GameConfiguration gameConfiguration = new GameConfiguration(2, 15, 3);
 
 	private DualNBackSession session;
-
-	public static void main(String[] args) {
-		launch(args);
-	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -46,6 +43,15 @@ public class DualNBackApplication extends Application {
 				System.out.println("score: " + sessionScore);
 			Platform.runLater(() -> initMainScene());
 		}
+	}
+
+	public void close() {
+		primaryStage.close();
+		System.exit(0);
+	}
+
+	public static void main(String[] args) {
+		launch(args);
 	}
 
 	private void initSessionScene() {
@@ -78,21 +84,12 @@ public class DualNBackApplication extends Application {
 
 			Scene scene = new Scene(rootLayout);
 
+			MainController mainController = loader.getController();
+			mainController.setApp(this);
+			mainController.initKeysHandling(scene);
+
 			primaryStage.setScene(scene);
 			primaryStage.show();
-
-			scene.setOnKeyPressed((e) -> {
-				switch (e.getCode()) {
-				case SPACE:
-					startSession();
-					break;
-				case ESCAPE:
-					primaryStage.close();
-					System.exit(0);
-				default:
-					break;
-				}
-			});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
