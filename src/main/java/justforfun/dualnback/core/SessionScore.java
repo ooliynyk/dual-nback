@@ -7,7 +7,7 @@ public class SessionScore {
 
 	private int positionMistakesTotal;
 	private int letterMistakesTotal;
-
+	
 	public void positionMatches() {
 		positionMatchesTotal++;
 	}
