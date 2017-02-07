@@ -18,6 +18,7 @@ public class DualNBackSession implements Session, SessionState {
 	private TrialStateGenerator stateGenerator;
 	private GameConfiguration gameConfig;
 	private TrialStateSequence stateSequence;
+	private TrialStateChecker stateChecker;
 	private SessionScore score;
 	private Timer scheduler;
 	private ExecutorService executor;
@@ -27,6 +28,7 @@ public class DualNBackSession implements Session, SessionState {
 	public DualNBackSession(GameConfiguration gameConfiguration) {
 		gameConfig = new GameConfiguration(gameConfiguration);
 		stateSequence = new TrialStateSequence(gameConfig.getNBackLevel());
+		stateChecker = new TrialStateChecker(stateSequence);
 		stateGenerator = new RandomTrialStateGenerator();
 		score = new SessionScore();
 		scheduler = new Timer();
@@ -55,10 +57,7 @@ public class DualNBackSession implements Session, SessionState {
 
 	@Override
 	public boolean isCurrentLetterAsNBack() {
-		Letter nBackLatter = stateSequence.getNBackState().getLetter();
-		Letter currentLatter = stateSequence.getCurrentState().getLetter();
-
-		boolean currentLetterAsNBack = currentLatter.equals(nBackLatter);
+		boolean currentLetterAsNBack = stateChecker.checkLetterMatching();
 		if (currentLetterAsNBack) {
 			score.letterMatches();
 		} else {
@@ -70,10 +69,7 @@ public class DualNBackSession implements Session, SessionState {
 
 	@Override
 	public boolean isCurrentPositionAsNBack() {
-		Position nBackPosition = stateSequence.getNBackState().getPosition();
-		Position currentPosition = stateSequence.getCurrentState().getPosition();
-
-		boolean currentPositionAsNBack = currentPosition.equals(nBackPosition);
+		boolean currentPositionAsNBack = stateChecker.checkPositionMatching();
 		if (currentPositionAsNBack) {
 			score.positionMatches();
 		} else {
@@ -95,7 +91,7 @@ public class DualNBackSession implements Session, SessionState {
 
 	private void scheduleTrials() {
 		long trialPeriodInMillis = TimeUnit.MILLISECONDS.convert(gameConfig.getSecPerTrial(), TimeUnit.SECONDS);
-		scheduler.scheduleAtFixedRate(new Trial(), trialPeriodInMillis / 2, trialPeriodInMillis);
+		scheduler.scheduleAtFixedRate(new Trial(trialPeriodInMillis), trialPeriodInMillis / 2, 1);
 	}
 
 	private void awaitForFinish() {
@@ -113,12 +109,24 @@ public class DualNBackSession implements Session, SessionState {
 
 	private class Trial extends TimerTask {
 
+		private long trialPeriodInMillis;
+
+		public Trial(long trialPeriodInMillis) {
+			this.trialPeriodInMillis = trialPeriodInMillis;
+		}
+
 		@Override
 		public void run() {
-			TrialState state = stateGenerator.nextState();
-			saveState(state);
-			notifyListeners(state);
-			duringTrialsLatch.countDown();
+			try {
+				TrialState state = stateGenerator.nextState();
+				saveState(state);
+				notifyListeners(state);
+				registerMatchingPass();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} finally {
+				duringTrialsLatch.countDown();
+			}
 		}
 
 		private void saveState(TrialState state) {
@@ -128,6 +136,18 @@ public class DualNBackSession implements Session, SessionState {
 
 		private void notifyListeners(TrialState state) {
 			stateListeners.forEach(sl -> sl.onNextTrial(state));
+		}
+
+		private void registerMatchingPass() throws InterruptedException {
+			Thread.sleep(trialPeriodInMillis);
+
+			if (!stateChecker.isLetterMatchingTested() && stateChecker.checkLetterMatching()) {
+				score.letterMistake();
+			}
+
+			if (!stateChecker.isPositionMatchingTested() && stateChecker.checkPositionMatching()) {
+				score.positionMistake();
+			}
 		}
 
 	}
