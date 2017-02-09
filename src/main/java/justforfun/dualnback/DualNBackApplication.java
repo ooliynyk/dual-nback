@@ -19,7 +19,7 @@ public class DualNBackApplication extends Application {
 	private Stage primaryStage;
 	private AnchorPane rootLayout;
 
-	private GameConfiguration gameConfiguration = new GameConfiguration(2, 15, 3);
+	private GameConfiguration gameConfiguration = new GameConfiguration(2, 13, 2);
 
 	private DualNBackSession session;
 
@@ -66,7 +66,7 @@ public class DualNBackApplication extends Application {
 			SessionController sessionController = loader.getController();
 			sessionController.setApp(this);
 			sessionController.initKeysHandling(scene);
-			sessionController.initConfiguration(gameConfiguration, session);
+			sessionController.initConfiguration(gameConfiguration, session.getStateChecker(), session);
 
 			primaryStage.setScene(scene);
 			primaryStage.show();

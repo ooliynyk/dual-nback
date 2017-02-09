@@ -2,6 +2,8 @@ package justforfun.dualnback.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -22,12 +24,15 @@ import justforfun.dualnback.core.SessionScore;
 import justforfun.dualnback.core.SessionState;
 import justforfun.dualnback.core.SessionStateListener;
 import justforfun.dualnback.core.TrialState;
+import justforfun.dualnback.core.TrialStateChecker;
 import justforfun.dualnback.model.VisualStimuli;
 import justforfun.dualnback.utils.LetterSpeaker;
 
 public class SessionController implements SessionStateListener, Initializable {
 
 	private static final String N_BACK_LEVEL_LABEL_PATTERN = "Dual %d-Back";
+
+	private Timer scheduler;
 
 	private VisualStimuli visualStimuli;
 	private Circle activeVisualStimuliCircle;
@@ -37,6 +42,9 @@ public class SessionController implements SessionStateListener, Initializable {
 	private LetterSpeaker speaker;
 
 	private SessionState sessionState;
+	private TrialStateChecker trialStateChecker;
+
+	private long trialDuratoinInMs;
 	private int trialsTotal;
 	private int trialsCounter = 1;
 
@@ -74,7 +82,7 @@ public class SessionController implements SessionStateListener, Initializable {
 		if (sessionState.isCurrentPositionAsNBack()) {
 			matchButtonStyle(positionMatchButton);
 		} else {
-			unmatchByttonStyle(positionMatchButton);
+			unmatchButtonStyle(positionMatchButton);
 		}
 	}
 
@@ -83,7 +91,7 @@ public class SessionController implements SessionStateListener, Initializable {
 		if (sessionState.isCurrentLetterAsNBack()) {
 			matchButtonStyle(audioMatchButton);
 		} else {
-			unmatchByttonStyle(audioMatchButton);
+			unmatchButtonStyle(audioMatchButton);
 		}
 	}
 
@@ -92,23 +100,18 @@ public class SessionController implements SessionStateListener, Initializable {
 		Circle[][] circles = { { topLeftCircle, topCenterCircle, topRightCircle },
 				{ midLeftCircle, midCenterCircle, midRightCircle },
 				{ botLeftCircle, botCenterCircle, botRightCircle } };
+		scheduler = new Timer();
 		visualStimuli = new VisualStimuli(circles);
 		speaker = new LetterSpeaker();
 	}
 
 	@Override
 	public void onNextTrial(TrialState trialState) {
-		clearButtonStyle(positionMatchButton);
-		clearButtonStyle(audioMatchButton);
-
-		Position position = trialState.getPosition();
-		activateVisualStimuliAtPosition(position);
-
-		Letter letter = trialState.getLetter();
-		speaker.speak(letter);
-
-		progressIndicator.setProgress(trialsCounter / (double) trialsTotal);
-		trialsCounter += 1;
+		clear();
+		activateVisualStimuliAtPosition(trialState.getPosition());
+		speakLetter(trialState.getLetter());
+		updateProgressIndicator();
+		scheduleShowMatchingMissed();
 	}
 
 	@Override
@@ -140,8 +143,11 @@ public class SessionController implements SessionStateListener, Initializable {
 		});
 	}
 
-	public void initConfiguration(GameConfiguration gameConfiguration, SessionState sessionState) {
+	public void initConfiguration(GameConfiguration gameConfiguration, TrialStateChecker trialStateChecker,
+			SessionState sessionState) {
+		trialDuratoinInMs = gameConfiguration.getSecPerTrial() * 1000l;
 		trialsTotal = gameConfiguration.getTrials();
+		this.trialStateChecker = trialStateChecker;
 
 		int nbackLevel = gameConfiguration.getNBackLevel();
 		nbackLevelLabel.setText(String.format(N_BACK_LEVEL_LABEL_PATTERN, nbackLevel));
@@ -171,12 +177,44 @@ public class SessionController implements SessionStateListener, Initializable {
 		button.setTextFill(Paint.valueOf("green"));
 	}
 
-	private void unmatchByttonStyle(Button button) {
+	private void unmatchButtonStyle(Button button) {
 		button.setTextFill(Paint.valueOf("red"));
 	}
 
 	private void clearButtonStyle(Button button) {
 		button.setTextFill(Paint.valueOf("black"));
+	}
+
+	private void updateProgressIndicator() {
+		progressIndicator.setProgress(trialsCounter++ / (double) trialsTotal);
+	}
+
+	private void speakLetter(Letter letter) {
+		speaker.speak(letter);
+	}
+
+	private void clear() {
+		clearButtonStyle(positionMatchButton);
+		clearButtonStyle(audioMatchButton);
+	}
+
+	private void scheduleShowMatchingMissed() {
+		scheduler.schedule(new ShowMatchingMissedTask(), trialDuratoinInMs - 500l);
+	}
+
+	private class ShowMatchingMissedTask extends TimerTask {
+
+		@Override
+		public void run() {
+			if (trialStateChecker.isLetterMatchingMissed()) {
+				unmatchButtonStyle(audioMatchButton);
+			}
+
+			if (trialStateChecker.isPositionMatchingMissed()) {
+				unmatchButtonStyle(positionMatchButton);
+			}
+		}
+
 	}
 
 }
