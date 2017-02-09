@@ -23,13 +23,13 @@ public class TrialStateChecker implements SessionStateListener {
 	public void onFinish(SessionScore sessionScore) {
 		// TODO Auto-generated method stub
 	}
-
-	public boolean isLetterMatchingTested() {
-		return letterAsNBackTested;
+	
+	public boolean isLetterMatchingMissed() {
+		return !letterAsNBackTested && checkLetterMatching();
 	}
-
-	public boolean isPositionMatchingTested() {
-		return positionAsNBackTested;
+	
+	public boolean isPositionMatchingMissed() {
+		return !positionAsNBackTested && checkPositionMatching();
 	}
 
 	public boolean checkLetterMatching() {

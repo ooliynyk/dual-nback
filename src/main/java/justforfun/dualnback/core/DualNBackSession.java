@@ -40,7 +40,7 @@ public class DualNBackSession implements Session, SessionState {
 	@Override
 	public void start() {
 		scheduleTrials();
-		awaitForFinish();
+		notifyOnFinish();
 	}
 
 	@Override
@@ -89,12 +89,16 @@ public class DualNBackSession implements Session, SessionState {
 		return "DualNBackSession [stateSequence=" + stateSequence + "]";
 	}
 
+	public TrialStateChecker getStateChecker() {
+		return stateChecker;
+	}
+
 	private void scheduleTrials() {
 		long trialPeriodInMillis = TimeUnit.MILLISECONDS.convert(gameConfig.getSecPerTrial(), TimeUnit.SECONDS);
 		scheduler.scheduleAtFixedRate(new Trial(trialPeriodInMillis), trialPeriodInMillis / 2, 1);
 	}
 
-	private void awaitForFinish() {
+	private void notifyOnFinish() {
 		executor.execute(() -> {
 			try {
 				duringTrialsLatch.await();
@@ -105,6 +109,10 @@ public class DualNBackSession implements Session, SessionState {
 				cancel();
 			}
 		});
+	}
+
+	private void notifyOnNextTrial(TrialState state) {
+		stateListeners.forEach(sl -> sl.onNextTrial(state));
 	}
 
 	private class Trial extends TimerTask {
@@ -120,8 +128,9 @@ public class DualNBackSession implements Session, SessionState {
 			try {
 				TrialState state = stateGenerator.nextState();
 				saveState(state);
-				notifyListeners(state);
-				registerMatchingPass();
+				notifyOnNextTrial(state);
+				Thread.sleep(trialPeriodInMillis);
+				registerMatchingMissed();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} finally {
@@ -134,18 +143,12 @@ public class DualNBackSession implements Session, SessionState {
 			System.out.println(stateSequence);
 		}
 
-		private void notifyListeners(TrialState state) {
-			stateListeners.forEach(sl -> sl.onNextTrial(state));
-		}
-
-		private void registerMatchingPass() throws InterruptedException {
-			Thread.sleep(trialPeriodInMillis);
-
-			if (!stateChecker.isLetterMatchingTested() && stateChecker.checkLetterMatching()) {
+		private void registerMatchingMissed() throws InterruptedException {
+			if (stateChecker.isLetterMatchingMissed()) {
 				score.letterMistake();
 			}
 
-			if (!stateChecker.isPositionMatchingTested() && stateChecker.checkPositionMatching()) {
+			if (stateChecker.isPositionMatchingMissed()) {
 				score.positionMistake();
 			}
 		}
