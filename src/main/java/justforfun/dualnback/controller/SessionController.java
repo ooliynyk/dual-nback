@@ -138,6 +138,12 @@ public class SessionController implements SessionStateListener, Initializable {
 				case L:
 					handleAudioMatchClick();
 					break;
+				case P:
+					app.pauseSession();
+					break;
+				case U:
+					app.unpauseSession();
+					break;
 				case ESCAPE:
 					app.finishSession(null);
 					break;
