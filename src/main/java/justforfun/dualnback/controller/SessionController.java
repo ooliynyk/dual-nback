@@ -46,7 +46,7 @@ public class SessionController implements SessionStateListener, Initializable {
 
 	private long trialDuratoinInMs;
 	private int trialsTotal;
-	private int trialsCounter = 1;
+	private int trialsCounter;
 
 	@FXML
 	private Circle topLeftCircle;
@@ -116,7 +116,13 @@ public class SessionController implements SessionStateListener, Initializable {
 
 	@Override
 	public void onFinish(SessionScore sessionScore) {
-		app.finishSession(sessionScore);
+		try {
+			Thread.sleep(2500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} finally {
+			app.finishSession(sessionScore);
+		}
 	}
 
 	public void initKeysHandling(Scene scene) {

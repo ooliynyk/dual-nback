@@ -35,6 +35,8 @@ public class DualNBackSession implements Session, SessionState {
 		executor = Executors.newSingleThreadExecutor();
 		duringTrialsLatch = new CountDownLatch(gameConfig.getTrials());
 		stateListeners = new ArrayList<>();
+		
+		addStateListener(stateChecker);
 	}
 
 	@Override
