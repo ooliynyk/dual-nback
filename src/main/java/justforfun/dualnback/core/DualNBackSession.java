@@ -25,6 +25,8 @@ public class DualNBackSession implements Session, SessionState {
 	private CountDownLatch duringTrialsLatch;
 	private List<SessionStateListener> stateListeners;
 
+	private static volatile boolean pause;
+
 	public DualNBackSession(GameConfiguration gameConfiguration) {
 		gameConfig = new GameConfiguration(gameConfiguration);
 		stateSequence = new TrialStateSequence(gameConfig.getNBackLevel());
@@ -35,7 +37,7 @@ public class DualNBackSession implements Session, SessionState {
 		executor = Executors.newSingleThreadExecutor();
 		duringTrialsLatch = new CountDownLatch(gameConfig.getTrials());
 		stateListeners = new ArrayList<>();
-		
+
 		addStateListener(stateChecker);
 	}
 
@@ -52,9 +54,13 @@ public class DualNBackSession implements Session, SessionState {
 	}
 
 	@Override
-	public void pause() {
-		// TODO Auto-generated method stub
+	public synchronized void pause() {
+		pause = true;
+	}
 
+	@Override
+	public synchronized void unpause() {
+		pause = false;
 	}
 
 	@Override
@@ -131,12 +137,22 @@ public class DualNBackSession implements Session, SessionState {
 				TrialState state = stateGenerator.nextState();
 				saveState(state);
 				notifyOnNextTrial(state);
-				Thread.sleep(trialPeriodInMillis);
+				awaitForFinish();
 				registerMatchingMissed();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} finally {
 				duringTrialsLatch.countDown();
+			}
+		}
+
+		private void awaitForFinish() throws InterruptedException {
+			int periods = 50;
+			long periodDelta = trialPeriodInMillis / periods;
+			for (int i = 0; i < periods; i++) {
+				Thread.sleep(periodDelta);
+				while (pause)
+					;
 			}
 		}
 

@@ -48,6 +48,8 @@ public class SessionController implements SessionStateListener, Initializable {
 	private int trialsTotal;
 	private int trialsCounter;
 
+	private boolean paused;
+
 	@FXML
 	private Circle topLeftCircle;
 	@FXML
@@ -137,6 +139,14 @@ public class SessionController implements SessionStateListener, Initializable {
 					break;
 				case L:
 					handleAudioMatchClick();
+					break;
+				case P:
+					if (paused) {
+						app.unpauseSession();
+					} else {
+						app.pauseSession();
+					}
+					paused = !paused;
 					break;
 				case ESCAPE:
 					app.finishSession(null);

@@ -35,6 +35,14 @@ public class DualNBackApplication extends Application {
 		Platform.runLater(() -> initSessionScene());
 		session.start();
 	}
+	
+	public void pauseSession() {
+		session.pause();
+	}
+	
+	public void unpauseSession() {
+		session.unpause();
+	}
 
 	public void finishSession(SessionScore sessionScore) {
 		if (session != null) {

@@ -8,4 +8,6 @@ public interface Session {
 
 	void pause();
 
+	void unpause();
+
 }
