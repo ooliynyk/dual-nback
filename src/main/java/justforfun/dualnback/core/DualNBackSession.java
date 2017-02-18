@@ -25,7 +25,7 @@ public class DualNBackSession implements Session, SessionState {
 	private CountDownLatch duringTrialsLatch;
 	private List<SessionStateListener> stateListeners;
 
-	private boolean pause;
+	private static volatile boolean pause;
 
 	public DualNBackSession(GameConfiguration gameConfiguration) {
 		gameConfig = new GameConfiguration(gameConfiguration);
@@ -54,16 +54,13 @@ public class DualNBackSession implements Session, SessionState {
 	}
 
 	@Override
-	public void pause() {
+	public synchronized void pause() {
 		pause = true;
 	}
 
 	@Override
-	public void unpause() {
+	public synchronized void unpause() {
 		pause = false;
-		synchronized (this) {
-			notifyAll();
-		}
 	}
 
 	@Override
@@ -154,10 +151,8 @@ public class DualNBackSession implements Session, SessionState {
 			long periodDelta = trialPeriodInMillis / periods;
 			for (int i = 0; i < periods; i++) {
 				Thread.sleep(periodDelta);
-				synchronized (Trial.this) {
-					while (pause)
-						wait();
-				}
+				while (pause)
+					;
 			}
 		}
 
