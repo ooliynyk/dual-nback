@@ -2,6 +2,9 @@ package justforfun.dualnback;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +18,8 @@ import justforfun.dualnback.core.GameConfiguration;
 import justforfun.dualnback.core.SessionScore;
 
 public class DualNBackApplication extends Application {
+
+	private static final Logger logger = LoggerFactory.getLogger(DualNBackApplication.class);
 
 	private Stage primaryStage;
 	private AnchorPane rootLayout;
@@ -35,11 +40,11 @@ public class DualNBackApplication extends Application {
 		Platform.runLater(() -> initSessionScene());
 		session.start();
 	}
-	
+
 	public void pauseSession() {
 		session.pause();
 	}
-	
+
 	public void unpauseSession() {
 		session.unpause();
 	}
@@ -48,7 +53,7 @@ public class DualNBackApplication extends Application {
 		if (session != null) {
 			session.cancel();
 			if (sessionScore != null)
-				System.out.println("score: " + sessionScore);
+				logger.info("Score: '{}'", sessionScore);
 			Platform.runLater(() -> initMainScene());
 		}
 	}
