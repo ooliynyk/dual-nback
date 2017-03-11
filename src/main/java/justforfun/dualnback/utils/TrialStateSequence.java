@@ -4,6 +4,9 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 import justforfun.dualnback.core.TrialState;
 
+/**
+ * Sequence with fixed size that operates with TrialState.
+ */
 public class TrialStateSequence {
 
 	private int capacity;
@@ -32,6 +35,9 @@ public class TrialStateSequence {
 		return deque.peekFirst();
 	}
 
+	/**
+	 * Prevents null pointer before first trial ends.
+	 */
 	private void awaitWhileEmpty() {
 		TrialState state = null;
 		if (deque.isEmpty()) {

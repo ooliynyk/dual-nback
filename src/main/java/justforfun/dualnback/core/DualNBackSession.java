@@ -9,11 +9,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import justforfun.dualnback.utils.RandomTrialStateGenerator;
 import justforfun.dualnback.utils.TrialStateGenerator;
 import justforfun.dualnback.utils.TrialStateSequence;
 
 public class DualNBackSession implements Session, SessionState {
+
+	private static final Logger logger = LoggerFactory.getLogger(DualNBackSession.class);
 
 	private TrialStateGenerator stateGenerator;
 	private GameConfiguration gameConfig;
@@ -157,8 +162,9 @@ public class DualNBackSession implements Session, SessionState {
 		}
 
 		private void saveState(TrialState state) {
+			logger.info("Saving trial state '{}'", state);
 			stateSequence.addState(state);
-			System.out.println(stateSequence);
+			logger.debug("Sequence '{}'", stateSequence);
 		}
 
 		private void registerMatchingMissed() throws InterruptedException {
