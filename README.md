@@ -9,4 +9,4 @@ However, instead of different items that are in a fixed location on the game boa
 "2-N" means that you have to remember the position of the item two turns back, and so on.
 
 ## Examples
-![3-back session progress](doc/resources/"dual 3-back session.png"?raw=true)
+![3-back session progress](doc/resources/dual%203-back%20session.png?raw=true)
