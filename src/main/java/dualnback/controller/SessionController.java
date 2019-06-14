@@ -1,4 +1,4 @@
-package justforfun.dualnback.controller;
+package dualnback.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -16,17 +16,17 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
-import justforfun.dualnback.DualNBackApplication;
-import justforfun.dualnback.core.GameConfiguration;
-import justforfun.dualnback.core.Letter;
-import justforfun.dualnback.core.Position;
-import justforfun.dualnback.core.SessionScore;
-import justforfun.dualnback.core.SessionState;
-import justforfun.dualnback.core.SessionStateListener;
-import justforfun.dualnback.core.TrialState;
-import justforfun.dualnback.core.TrialStateChecker;
-import justforfun.dualnback.model.VisualStimuli;
-import justforfun.dualnback.utils.LetterSpeaker;
+import dualnback.DualNBackApplication;
+import dualnback.core.GameConfiguration;
+import dualnback.core.Letter;
+import dualnback.core.Position;
+import dualnback.core.SessionScore;
+import dualnback.core.SessionState;
+import dualnback.core.SessionStateListener;
+import dualnback.core.TrialState;
+import dualnback.core.TrialStateChecker;
+import dualnback.model.VisualStimuliActivator;
+import dualnback.utils.LetterSpeaker;
 
 public class SessionController implements SessionStateListener, Initializable {
 
@@ -34,8 +34,7 @@ public class SessionController implements SessionStateListener, Initializable {
 
 	private Timer scheduler;
 
-	private VisualStimuli visualStimuli;
-	private Circle activeVisualStimuliCircle;
+	private VisualStimuliActivator visualStimuliActivator;
 
 	private DualNBackApplication app;
 
@@ -44,7 +43,7 @@ public class SessionController implements SessionStateListener, Initializable {
 	private SessionState sessionState;
 	private TrialStateChecker trialStateChecker;
 
-	private long trialDuratoinInMs;
+	private long trialDurationInMs;
 	private int trialsTotal;
 	private int trialsCounter;
 
@@ -81,7 +80,7 @@ public class SessionController implements SessionStateListener, Initializable {
 
 	@FXML
 	private void handlePositionMatchClick() {
-		if (sessionState.isCurrentPositionAsNBack()) {
+		if (sessionState.positionMatches()) {
 			matchButtonStyle(positionMatchButton);
 		} else {
 			unmatchButtonStyle(positionMatchButton);
@@ -90,7 +89,7 @@ public class SessionController implements SessionStateListener, Initializable {
 
 	@FXML
 	private void handleAudioMatchClick() {
-		if (sessionState.isCurrentLetterAsNBack()) {
+		if (sessionState.letterMatches()) {
 			matchButtonStyle(audioMatchButton);
 		} else {
 			unmatchButtonStyle(audioMatchButton);
@@ -99,11 +98,13 @@ public class SessionController implements SessionStateListener, Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		Circle[][] circles = { { topLeftCircle, topCenterCircle, topRightCircle },
+		Circle[][] circles = {
+				{ topLeftCircle, topCenterCircle, topRightCircle },
 				{ midLeftCircle, midCenterCircle, midRightCircle },
-				{ botLeftCircle, botCenterCircle, botRightCircle } };
+				{ botLeftCircle, botCenterCircle, botRightCircle }
+		};
 		scheduler = new Timer();
-		visualStimuli = new VisualStimuli(circles);
+		visualStimuliActivator = new VisualStimuliActivator(circles);
 		speaker = new LetterSpeaker();
 	}
 
@@ -161,7 +162,7 @@ public class SessionController implements SessionStateListener, Initializable {
 
 	public void initConfiguration(GameConfiguration gameConfiguration, TrialStateChecker trialStateChecker,
 			SessionState sessionState) {
-		trialDuratoinInMs = gameConfiguration.getSecPerTrial() * 1000l;
+		trialDurationInMs = gameConfiguration.getSecPerTrial() * 1000l;
 		trialsTotal = gameConfiguration.getTrials();
 		this.trialStateChecker = trialStateChecker;
 
@@ -181,12 +182,7 @@ public class SessionController implements SessionStateListener, Initializable {
 	}
 
 	private void activateVisualStimuliAtPosition(Position position) {
-		if (activeVisualStimuliCircle != null) {
-			activeVisualStimuliCircle.setVisible(false);
-		}
-
-		activeVisualStimuliCircle = visualStimuli.getCircleAtPosition(position);
-		activeVisualStimuliCircle.setVisible(true);
+		visualStimuliActivator.activate(position);
 	}
 
 	private void matchButtonStyle(Button button) {
@@ -215,7 +211,7 @@ public class SessionController implements SessionStateListener, Initializable {
 	}
 
 	private void scheduleShowMatchingMissed() {
-		scheduler.schedule(new ShowMatchingMissedTask(), trialDuratoinInMs - 500l);
+		scheduler.schedule(new ShowMatchingMissedTask(), trialDurationInMs - 500l);
 	}
 
 	private class ShowMatchingMissedTask extends TimerTask {

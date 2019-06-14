@@ -1,4 +1,4 @@
-package justforfun.dualnback.core;
+package dualnback.core;
 
 public interface Session {
 

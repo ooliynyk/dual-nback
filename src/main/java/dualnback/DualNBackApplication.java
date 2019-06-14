@@ -1,8 +1,13 @@
-package justforfun.dualnback;
+package dualnback;
 
 import java.io.IOException;
 import java.net.URL;
 
+import dualnback.controller.MainController;
+import dualnback.controller.SessionController;
+import dualnback.core.DualNBackSession;
+import dualnback.core.GameConfiguration;
+import dualnback.core.SessionScore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,11 +17,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import justforfun.dualnback.controller.MainController;
-import justforfun.dualnback.controller.SessionController;
-import justforfun.dualnback.core.DualNBackSession;
-import justforfun.dualnback.core.GameConfiguration;
-import justforfun.dualnback.core.SessionScore;
 
 public class DualNBackApplication extends Application {
 
@@ -29,7 +29,7 @@ public class DualNBackApplication extends Application {
 	private Stage primaryStage;
 	private AnchorPane rootLayout;
 
-	private GameConfiguration gameConfiguration = new GameConfiguration(2, 13, 2);
+	private final GameConfiguration gameConfiguration = GameConfiguration.DEFAULT;
 
 	private DualNBackSession session;
 

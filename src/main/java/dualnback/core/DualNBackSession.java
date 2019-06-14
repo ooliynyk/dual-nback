@@ -1,4 +1,4 @@
-package justforfun.dualnback.core;
+package dualnback.core;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,12 +9,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import dualnback.utils.RandomTrialStateGenerator;
+import dualnback.utils.TrialStateGenerator;
+import dualnback.utils.TrialStateSequence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import justforfun.dualnback.utils.RandomTrialStateGenerator;
-import justforfun.dualnback.utils.TrialStateGenerator;
-import justforfun.dualnback.utils.TrialStateSequence;
 
 public class DualNBackSession implements Session, SessionState {
 
@@ -69,27 +68,27 @@ public class DualNBackSession implements Session, SessionState {
 	}
 
 	@Override
-	public boolean isCurrentLetterAsNBack() {
-		boolean currentLetterAsNBack = stateChecker.checkLetterMatching();
-		if (currentLetterAsNBack) {
+	public boolean letterMatches() {
+		boolean matches = stateChecker.checkLetterMatching();
+		if (matches) {
 			score.letterMatches();
 		} else {
 			score.letterMistake();
 		}
 
-		return currentLetterAsNBack;
+		return matches;
 	}
 
 	@Override
-	public boolean isCurrentPositionAsNBack() {
-		boolean currentPositionAsNBack = stateChecker.checkPositionMatching();
-		if (currentPositionAsNBack) {
+	public boolean positionMatches() {
+		boolean matches = stateChecker.checkPositionMatching();
+		if (matches) {
 			score.positionMatches();
 		} else {
 			score.positionMistake();
 		}
 
-		return currentPositionAsNBack;
+		return matches;
 	}
 
 	@Override

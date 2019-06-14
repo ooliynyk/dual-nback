@@ -1,6 +1,8 @@
-package justforfun.dualnback.core;
+package dualnback.core;
 
 public class GameConfiguration {
+
+	public static final GameConfiguration DEFAULT = new GameConfiguration(2, 13, 2);
 
 	private int nBackLevel;
 	private int trials;

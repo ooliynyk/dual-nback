@@ -1,10 +1,10 @@
-package justforfun.dualnback.utils;
+package dualnback.utils;
 
 import java.util.Random;
 
-import justforfun.dualnback.core.TrialState;
-import justforfun.dualnback.core.Letter;
-import justforfun.dualnback.core.Position;
+import dualnback.core.TrialState;
+import dualnback.core.Letter;
+import dualnback.core.Position;
 
 public class RandomTrialStateGenerator implements TrialStateGenerator {
 

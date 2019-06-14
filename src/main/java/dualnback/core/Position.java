@@ -1,4 +1,4 @@
-package justforfun.dualnback.core;
+package dualnback.core;
 
 public enum Position {
 	TOP_LEFT, TOP_CENTER, TOP_RIGHT,
