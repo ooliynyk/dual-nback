@@ -1,4 +1,4 @@
-package justforfun.dualnback.utils;
+package dualnback.utils;
 
 import java.util.Locale;
 
@@ -7,7 +7,7 @@ import javax.speech.EngineException;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerModeDesc;
 
-import justforfun.dualnback.core.Letter;
+import dualnback.core.Letter;
 
 public class LetterSpeaker {
 

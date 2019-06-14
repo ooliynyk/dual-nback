@@ -1,83 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>justforfun</groupId>
-	<artifactId>dual-nback</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+    <groupId>dual-nback</groupId>
+    <artifactId>dual-nback</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-	<name>dual-nback</name>
-	<description>Dual N-Back game</description>
+    <name>dual-nback</name>
+    <description>Dual N-Back game</description>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-	</properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.24</version>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.24</version>
+        </dependency>
 
-		<!-- speech -->
-		<dependency>
-			<groupId>org.mobicents.external.freetts</groupId>
-			<artifactId>cmu_us_kal</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mobicents.external.freetts</groupId>
-			<artifactId>cmu_time_awb</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mobicents.external.freetts</groupId>
-			<artifactId>freetts</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mobicents.external.freetts</groupId>
-			<artifactId>en_us</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mobicents.external.freetts</groupId>
-			<artifactId>cmulex</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.speech</groupId>
-			<artifactId>jsapi</artifactId>
-			<version>1.0</version>
-			<type>jar</type>
-		</dependency>
-	</dependencies>
+        <!-- speech -->
+        <dependency>
+            <groupId>net.sf.sociaal</groupId>
+            <artifactId>freetts</artifactId>
+            <version>1.2.2</version>
+        </dependency>
+    </dependencies>
 
-	<build>
-
-	</build>
-	<repositories>
-		<repository>
-			<id>speech</id>
-			<name>speech</name>
-			<url>http://maven.it.su.se/it.su.se/maven2</url>
-		</repository>
-		<repository>
-			<id>java.net-m2</id>
-			<name>java.net - Maven 2</name>
-			<url>https://repository.jboss.org/nexus/content/repositories/java.net-m2</url>
-		</repository>
-	</repositories>
+    <build>
+    </build>
 
 </project>

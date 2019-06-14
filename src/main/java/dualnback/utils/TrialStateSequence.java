@@ -1,8 +1,8 @@
-package justforfun.dualnback.utils;
+package dualnback.utils;
 
 import java.util.concurrent.LinkedBlockingDeque;
 
-import justforfun.dualnback.core.TrialState;
+import dualnback.core.TrialState;
 
 /**
  * Sequence with fixed size that operates with TrialState.

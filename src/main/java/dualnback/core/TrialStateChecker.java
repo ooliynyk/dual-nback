@@ -1,6 +1,6 @@
-package justforfun.dualnback.core;
+package dualnback.core;
 
-import justforfun.dualnback.utils.TrialStateSequence;
+import dualnback.utils.TrialStateSequence;
 
 public class TrialStateChecker implements SessionStateListener {
 

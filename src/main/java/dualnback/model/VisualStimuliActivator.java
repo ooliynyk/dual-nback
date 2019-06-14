@@ -1,19 +1,29 @@
-package justforfun.dualnback.model;
+package dualnback.model;
 
 import javafx.scene.shape.Circle;
-import justforfun.dualnback.core.Position;
+import dualnback.core.Position;
 
-public class VisualStimuli {
+public class VisualStimuliActivator {
 
 	private Circle[][] circles;
 
+	private Circle activeVisualStimuliCircle;
 
-	public VisualStimuli(Circle[][] circles) {
+	public VisualStimuliActivator(Circle[][] circles) {
 		this.circles = circles;
 	}
 
-	public Circle getCircleAtPosition(Position position) {
-		Circle circle = null;
+	public void activate(Position position) {
+		if (activeVisualStimuliCircle != null) {
+			activeVisualStimuliCircle.setVisible(false);
+		}
+
+		activeVisualStimuliCircle = getCircleAtPosition(position);
+		activeVisualStimuliCircle.setVisible(true);
+	}
+
+	private Circle getCircleAtPosition(Position position) {
+		Circle circle;
 		switch (position) {
 		case BOTTOM_CENTER:
 			circle = circles[2][1];

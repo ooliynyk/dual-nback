@@ -1,7 +1,7 @@
-package justforfun.dualnback.controller;
+package dualnback.controller;
 
 import javafx.scene.Scene;
-import justforfun.dualnback.DualNBackApplication;
+import dualnback.DualNBackApplication;
 
 public class MainController {
 

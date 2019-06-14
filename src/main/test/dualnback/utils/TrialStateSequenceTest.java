@@ -1,12 +1,12 @@
-package justforfun.dualnback.utils;
+package dualnback.utils;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import justforfun.dualnback.core.Letter;
-import justforfun.dualnback.core.Position;
-import justforfun.dualnback.core.TrialState;
+import dualnback.core.Letter;
+import dualnback.core.Position;
+import dualnback.core.TrialState;
 
 public class TrialStateSequenceTest {
 
@@ -14,14 +14,14 @@ public class TrialStateSequenceTest {
 
 	private TrialState firstState = new TrialState(Letter.A, Position.BOTTOM_CENTER);
 	private TrialState secondState = new TrialState(Letter.B, Position.MIDDLE_LEFT);
-	private TrialState thirthState = new TrialState(Letter.C, Position.TOP_CENTER);
+	private TrialState thirdState = new TrialState(Letter.C, Position.TOP_CENTER);
 
 	@Test
 	public void testNBackState() {
 		TrialStateSequence seq = new TrialStateSequence(N_BACK_LEVEL);
 		seq.addState(firstState);
 		seq.addState(secondState);
-		seq.addState(thirthState);
+		seq.addState(thirdState);
 
 		assertEquals(firstState, seq.getNBackState());
 	}
@@ -31,9 +31,9 @@ public class TrialStateSequenceTest {
 		TrialStateSequence seq = new TrialStateSequence(N_BACK_LEVEL);
 		seq.addState(firstState);
 		seq.addState(secondState);
-		seq.addState(thirthState);
+		seq.addState(thirdState);
 
-		assertEquals(thirthState, seq.getCurrentState());
+		assertEquals(thirdState, seq.getCurrentState());
 	}
 
 	@Test
@@ -42,7 +42,7 @@ public class TrialStateSequenceTest {
 		TrialStateSequence seq = new TrialStateSequence(N_BACK_LEVEL);
 		seq.addState(firstState);
 		seq.addState(secondState);
-		seq.addState(thirthState);
+		seq.addState(thirdState);
 		seq.addState(newState);
 
 		assertEquals(secondState, seq.getNBackState());

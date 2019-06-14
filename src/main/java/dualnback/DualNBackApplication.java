@@ -1,7 +1,13 @@
-package justforfun.dualnback;
+package dualnback;
 
 import java.io.IOException;
+import java.net.URL;
 
+import dualnback.controller.MainController;
+import dualnback.controller.SessionController;
+import dualnback.core.DualNBackSession;
+import dualnback.core.GameConfiguration;
+import dualnback.core.SessionScore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,26 +17,25 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import justforfun.dualnback.controller.MainController;
-import justforfun.dualnback.controller.SessionController;
-import justforfun.dualnback.core.DualNBackSession;
-import justforfun.dualnback.core.GameConfiguration;
-import justforfun.dualnback.core.SessionScore;
 
 public class DualNBackApplication extends Application {
 
 	private static final Logger logger = LoggerFactory.getLogger(DualNBackApplication.class);
 
+	private static final String SESSION_VIEW_PATH = "view/Session.fxml";
+	private static final String MAIN_VIEW_PATH = "view/Main.fxml";
+	private static final String APP_TITLE = "Dual N-Back";
+
 	private Stage primaryStage;
 	private AnchorPane rootLayout;
 
-	private GameConfiguration gameConfiguration = new GameConfiguration(2, 13, 2);
+	private final GameConfiguration gameConfiguration = GameConfiguration.DEFAULT;
 
 	private DualNBackSession session;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		primaryStage.setTitle("Dual N-Back");
+		primaryStage.setTitle(APP_TITLE);
 		this.primaryStage = primaryStage;
 		initMainScene();
 	}
@@ -70,9 +75,9 @@ public class DualNBackApplication extends Application {
 	private void initSessionScene() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(DualNBackApplication.class.getResource("view/Session.fxml"));
+			loader.setLocation(getClasspathResource(SESSION_VIEW_PATH));
 
-			rootLayout = (AnchorPane) loader.load();
+			rootLayout = loader.load();
 
 			Scene scene = new Scene(rootLayout);
 
@@ -91,9 +96,9 @@ public class DualNBackApplication extends Application {
 	private void initMainScene() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(DualNBackApplication.class.getResource("view/Main.fxml"));
+			loader.setLocation(getClasspathResource(MAIN_VIEW_PATH));
 
-			rootLayout = (AnchorPane) loader.load();
+			rootLayout = loader.load();
 
 			Scene scene = new Scene(rootLayout);
 
@@ -106,6 +111,10 @@ public class DualNBackApplication extends Application {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static URL getClasspathResource(String s) {
+		return DualNBackApplication.class.getClassLoader().getResource(s);
 	}
 
 }
