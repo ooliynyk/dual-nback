@@ -4,7 +4,7 @@ public interface Session {
 
 	void start();
 
-	void cancel();
+	void finish();
 
 	void pause();
 

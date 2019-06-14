@@ -47,12 +47,14 @@ public class DualNBackSession implements Session, SessionState {
 
 	@Override
 	public void start() {
+		logger.info("Starting a new session");
 		scheduleTrials();
 		notifyOnFinish();
 	}
 
 	@Override
-	public void cancel() {
+	public void finish() {
+		logger.info("Finishing session");
 		scheduler.cancel();
 		executor.shutdownNow();
 	}
@@ -118,7 +120,7 @@ public class DualNBackSession implements Session, SessionState {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} finally {
-				cancel();
+				finish();
 			}
 		});
 	}
