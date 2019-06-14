@@ -70,24 +70,24 @@ public class DualNBackSession implements Session, SessionState {
 	}
 
 	@Override
-	public boolean letterMatches() {
+	public boolean isCurrentLetterMatchesNBack() {
 		boolean matches = stateChecker.checkLetterMatching();
 		if (matches) {
 			score.letterMatches();
 		} else {
-			score.letterMistake();
+			score.addLetterMistake();
 		}
 
 		return matches;
 	}
 
 	@Override
-	public boolean positionMatches() {
+	public boolean isCurrentPositionMatchesNBack() {
 		boolean matches = stateChecker.checkPositionMatching();
 		if (matches) {
 			score.positionMatches();
 		} else {
-			score.positionMistake();
+			score.addPositionMistake();
 		}
 
 		return matches;
@@ -144,7 +144,7 @@ public class DualNBackSession implements Session, SessionState {
 				saveState(state);
 				notifyOnNextTrial(state);
 				awaitForFinish();
-				registerMatchingMissed();
+				checkMismatch();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} finally {
@@ -168,13 +168,13 @@ public class DualNBackSession implements Session, SessionState {
 			logger.debug("Sequence '{}'", stateSequence);
 		}
 
-		private void registerMatchingMissed() throws InterruptedException {
+		private void checkMismatch() throws InterruptedException {
 			if (stateChecker.isLetterMatchingMissed()) {
-				score.letterMistake();
+				score.addLetterMistake();
 			}
 
 			if (stateChecker.isPositionMatchingMissed()) {
-				score.positionMistake();
+				score.addPositionMistake();
 			}
 		}
 

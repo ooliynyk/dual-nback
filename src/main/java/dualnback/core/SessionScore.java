@@ -16,11 +16,11 @@ public class SessionScore {
 		letterMatchesTotal++;
 	}
 
-	public void positionMistake() {
+	public void addPositionMistake() {
 		positionMistakesTotal++;
 	}
 
-	public void letterMistake() {
+	public void addLetterMistake() {
 		letterMistakesTotal++;
 	}
 

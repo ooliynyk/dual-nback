@@ -80,7 +80,7 @@ public class SessionController implements SessionStateListener, Initializable {
 
 	@FXML
 	private void handlePositionMatchClick() {
-		if (sessionState.positionMatches()) {
+		if (sessionState.isCurrentPositionMatchesNBack()) {
 			matchButtonStyle(positionMatchButton);
 		} else {
 			unmatchButtonStyle(positionMatchButton);
@@ -89,7 +89,7 @@ public class SessionController implements SessionStateListener, Initializable {
 
 	@FXML
 	private void handleAudioMatchClick() {
-		if (sessionState.letterMatches()) {
+		if (sessionState.isCurrentLetterMatchesNBack()) {
 			matchButtonStyle(audioMatchButton);
 		} else {
 			unmatchButtonStyle(audioMatchButton);
